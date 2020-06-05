@@ -17,7 +17,7 @@ class Arkanoid:
         self.clock = pygame.time.Clock()
         self.sprite_sheet = SpriteSheet(os.path.join(self.settings.images_path, "sh_2.png"))
         self.blocks = Blocks(self.screen, self.sprite_sheet)
-        self.blocks.place_block(pygame.display.get_surface().get_rect().center)
+        self.blocks.place_blocks()
 
     def run(self):
         while True:
