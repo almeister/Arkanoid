@@ -1,8 +1,9 @@
+import os
 import sys
 import pygame
-import os
 
 from settings import Settings
+from blocks import Blocks
 from spritesheet import SpriteSheet
 
 
@@ -10,16 +11,18 @@ class Arkanoid:
 
     def __init__(self):
         pygame.init()
+        pygame.display.set_caption("Arkanoid")
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.clock = pygame.time.Clock()
-        pygame.display.set_caption("Arkanoid")
-        self.spritesheet = SpriteSheet(os.path.join(self.settings.images_path, "sh_2.png"))
+        self.sprite_sheet = SpriteSheet(os.path.join(self.settings.images_path, "sh_2.png"))
+        self.blocks = Blocks(self.screen, self.sprite_sheet)
+        self.blocks.place_block(pygame.display.get_surface().get_rect().center)
 
     def run(self):
         while True:
             self.check_events()
-            self.update_screen()
+            self.update()
 
             self.clock.tick(30)
 
@@ -31,13 +34,9 @@ class Arkanoid:
                 if event.key == pygame.K_q:
                     sys.exit()
 
-    def update_screen(self):
+    def update(self):
         self.screen.fill(self.settings.bg_color)
-        block = self.spritesheet.image_at((5, 70, 67, 27))
-
-        block_rectangle = block.get_rect()
-        block_rectangle.topleft = pygame.display.get_surface().get_rect().center
-        self.screen.blit(block, block_rectangle)
+        self.blocks.update()
 
         pygame.display.flip()
 
