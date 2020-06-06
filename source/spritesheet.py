@@ -12,7 +12,6 @@ class SpriteSheet:
 
     def image_at(self, rectangle, colorkey=None):
         rect = pygame.Rect(rectangle)
-        image = pygame.Surface(rect.size)
-        image.blit(self.sheet, image.get_rect(), rect)
+        image = self.sheet.subsurface(rect)
 
         return image
