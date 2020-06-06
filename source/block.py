@@ -15,5 +15,5 @@ class Block:
 
     def update(self):
         block_rectangle = self.image.get_rect()
-        block_rectangle.topleft = self.position
+        block_rectangle.center = self.position
         self.screen.blit(self.image, block_rectangle)
