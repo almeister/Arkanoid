@@ -1,11 +1,11 @@
 import os
-import sys
 import pygame
 
 from playerplatform import PlayerPlatform
 from settings import Settings
 from blocks import Blocks
 from spritesheet import SpriteSheet
+from playercontroller import PlayerController
 
 
 class Arkanoid:
@@ -17,30 +17,30 @@ class Arkanoid:
         self.clock = pygame.time.Clock()
         self.sprite_sheet = SpriteSheet(os.path.join(self.settings.images_path, "sh_2.png"))
         self.blocks = Blocks(self.screen, self.sprite_sheet)
-        self.blocks.place_blocks()
         self.platform = PlayerPlatform(self.screen, self.sprite_sheet)
+        self.player_controller = PlayerController()
+        self.load_level()
 
     def setup(self):
         pygame.init()
         pygame.display.set_caption("Arkanoid")
 
+    def load_level(self):
+        self.blocks.place_blocks()
+
     def run(self):
         while True:
-            self.check_events()
+            self.player_controller.update()
             self.update()
 
-            self.clock.tick(30)
+            self.clock.tick(60)
 
-    def check_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
-                    sys.exit()
+    def update_movement(self):
+        self.platform.move(self.player_controller.get_movement())
 
     def update(self):
         self.screen.fill(self.settings.bg_color)
+        self.update_movement()
         self.platform.update()
         self.blocks.update()
 
@@ -50,4 +50,3 @@ class Arkanoid:
 if __name__ == '__main__':
     arkanoid = Arkanoid()
     arkanoid.run()
-
