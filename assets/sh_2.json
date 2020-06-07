@@ -1,0 +1,64 @@
+{
+	"frames": {
+		"YellowBlock.png": {
+			"frame": {
+				"x": 5,
+				"y": 70,
+				"w": 67,
+				"h": 27
+			}
+		},"RedBlock.png": {
+			"frame": {
+				"x": 83,
+				"y": 70,
+				"w": 67,
+				"h": 27
+			}
+		},"GreenBlock.png": {
+			"frame": {
+				"x": 165,
+				"y": 70,
+				"w": 67,
+				"h": 27
+			}
+		},"BlueBlock.png": {
+			"frame": {
+				"x": 243,
+				"y": 70,
+				"w": 67,
+				"h": 27
+			}
+		},"OrangeBlock.png": {
+			"frame": {
+				"x": 243,
+				"y": 277,
+				"w": 67,
+				"h": 27
+			}
+		},"SmallPlatform.png": {
+			"frame": {
+				"x": 25,
+				"y": 190,
+				"w": 71,
+				"h": 22
+			}
+		},"MediumPlatform.png": {
+			"frame": {
+				"x": 25,
+				"y": 220,
+				"w": 138,
+				"h": 22
+			}
+		},"LargePlatform.png": {
+			"frame": {
+				"x": 25,
+				"y": 252,
+				"w": 204,
+				"h": 24
+			}
+		}
+	},
+	"meta": {
+		"image": "sh_2.png"
+	}
+}

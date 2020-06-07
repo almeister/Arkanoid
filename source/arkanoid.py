@@ -1,27 +1,26 @@
-import os
 import pygame
 
+from blocks import Blocks
+from playercontroller import PlayerController
 from playerplatform import PlayerPlatform
 from settings import Settings
-from blocks import Blocks
 from spritesheet import SpriteSheet
-from playercontroller import PlayerController
 
 
 class Arkanoid:
 
     def __init__(self):
-        self.setup()
+        self.setup_pygame()
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.clock = pygame.time.Clock()
-        self.sprite_sheet = SpriteSheet(os.path.join(self.settings.images_path, "sh_2.png"))
+        self.sprite_sheet = SpriteSheet(self.settings.images_path, "sh_2.json")
         self.blocks = Blocks(self.screen, self.sprite_sheet)
         self.platform = PlayerPlatform(self.screen, self.sprite_sheet)
         self.player_controller = PlayerController()
         self.load_level()
 
-    def setup(self):
+    def setup_pygame(self):
         pygame.init()
         pygame.display.set_caption("Arkanoid")
 

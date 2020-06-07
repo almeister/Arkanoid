@@ -20,6 +20,7 @@ class PlayerController:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            # TODO: Fix bug when left and right both pressed
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     sys.exit()
