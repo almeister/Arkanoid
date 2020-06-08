@@ -16,12 +16,11 @@ class Blocks:
         self.block_size = self.Size(67, 27)
         self.spacing = self.Size(5, 0)
 
-    # TODO: Replace with LevelLoader.load_level(name)
-    def place_blocks(self):
-        block_pos = self.Position(self.screen.get_rect().centerx, self.screen.get_rect().centery)
-        for block_type in self.block_types:
-            self.place_block(block_type, block_pos)
-            block_pos = self.Position(block_pos.x + self.block_size.width + self.spacing.width, block_pos.y)
+    def place_blocks(self, origin, blocks):
+        for block in blocks:
+            block_pos = self.Position(origin["x"] + block['grid_position']['x'] * self.block_size.width,
+                                      origin["y"] + block['grid_position']['y'] * self.block_size.height)
+            self.place_block(block["type"], block_pos)
 
     def place_block(self, block_type, position):
         block = Block(self.screen, self.sprite_sheet, self.block_types[block_type], position)

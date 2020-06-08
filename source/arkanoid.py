@@ -5,6 +5,7 @@ from playercontroller import PlayerController
 from playerplatform import PlayerPlatform
 from settings import Settings
 from spritesheet import SpriteSheet
+from levelloader import LevelLoader
 
 
 class Arkanoid:
@@ -14,7 +15,7 @@ class Arkanoid:
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.clock = pygame.time.Clock()
-        self.sprite_sheet = SpriteSheet(self.settings.images_path, "sh_2.json")
+        self.sprite_sheet = SpriteSheet(self.settings.sprites_path, "sh_2.json")
         self.blocks = Blocks(self.screen, self.sprite_sheet)
         self.platform = PlayerPlatform(self.screen, self.sprite_sheet)
         self.player_controller = PlayerController()
@@ -25,7 +26,9 @@ class Arkanoid:
         pygame.display.set_caption("Arkanoid")
 
     def load_level(self):
-        self.blocks.place_blocks()
+        level_loader = LevelLoader(self.settings.levels_path)
+        level_data = level_loader.load_level(1)
+        self.blocks.place_blocks(level_data.get_grid()["origin"], level_data.get_blocks())
 
     def run(self):
         while True:
