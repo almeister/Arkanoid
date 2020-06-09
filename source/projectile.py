@@ -1,14 +1,13 @@
-from collections import namedtuple
+from cartesiantypes import Point
 
 
 class Projectile:
     types = {'small': 'SmallBall.png'}
-    Position = namedtuple('Position', ['x', 'y'])  # TODO: Consolidate typedefs
 
     def __init__(self, screen, sprite_sheet, sprite_name):
         self.screen = screen
         self.image = sprite_sheet.image_by_name(sprite_name)
-        self.position = self.Position(0, 0)
+        self.position = Point(0, 0)
         self.speed = (0, 0)
 
     def get_ball_size(self):

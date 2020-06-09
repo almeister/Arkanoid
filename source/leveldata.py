@@ -12,5 +12,9 @@ class LevelData:
         return self.level_data["blocks"]
 
     def validate_level(self, level_data):
-        # TODO: Assert on bad level data
-        return True
+        assert "grid" in level_data
+        assert "origin" in level_data["grid"]
+        assert "w" in level_data["grid"]
+        assert "h" in level_data["grid"]
+        assert "blocks" in level_data
+
