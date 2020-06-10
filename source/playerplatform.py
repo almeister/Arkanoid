@@ -26,6 +26,7 @@ class PlayerPlatform:
         projectile_size = self.projectile.get_ball_size()
         projectile_position = Point(self.position[0], self.position[1] - projectile_size[0])
         if not self.projectile.is_in_flight():
+            self.projectile.update_launch_angle(delta)
             self.projectile.set_position(projectile_position)
 
     def fire(self):
