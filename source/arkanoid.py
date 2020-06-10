@@ -18,7 +18,7 @@ class Arkanoid:
         self.sprite_sheet = SpriteSheet(self.settings.sprites_path, "sh_2.json")
         self.blocks = Blocks(self.screen, self.sprite_sheet)
         self.platform = PlayerPlatform(self.screen, self.sprite_sheet)
-        self.player_controller = PlayerController()
+        self.player_controller = PlayerController(lambda: self.platform.fire())
         self.load_level()
 
     def setup_pygame(self):

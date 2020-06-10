@@ -19,13 +19,17 @@ class PlayerPlatform:
         self.projectile = Projectile(self.screen, self.sprite_sheet, Projectile.types["small"])
 
     def get_position(self):
-        return self.position
+        return self.position  # TODO: Test getting public members as attributes
 
     def move(self, delta):
         self.position = tuple(map(operator.add, self.position, (delta, 0)))
         projectile_size = self.projectile.get_ball_size()
         projectile_position = Point(self.position[0], self.position[1] - projectile_size[0])
-        self.projectile.set_position(projectile_position)
+        if not self.projectile.is_in_flight():
+            self.projectile.set_position(projectile_position)
+
+    def fire(self):
+        self.projectile.fire()
 
     def update(self):
         rectangle = self.image.get_rect()

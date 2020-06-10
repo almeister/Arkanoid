@@ -13,8 +13,9 @@ class Movement(Enum):
 class PlayerController:
     movement_speed = 15
 
-    def __init__(self):
+    def __init__(self, on_fire):
         self.movement = Movement.IDLE
+        self.on_fire = on_fire
 
     def poll_events(self):
         for event in pygame.event.get():
@@ -30,7 +31,7 @@ class PlayerController:
                     self.movement = Movement.RIGHT
 
                 if event.key == pygame.K_SPACE:
-                    self.fire_projectile()
+                    self.on_fire()
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     self.movement = Movement.IDLE
@@ -42,9 +43,6 @@ class PlayerController:
             return self.movement_speed
         else:
             return 0
-
-    # def fire_projectile(self):
-
 
     def update(self):
         self.poll_events()
