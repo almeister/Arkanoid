@@ -1,5 +1,7 @@
 import operator
 
+import pygame
+
 from cartesiantypes import Point
 from projectile import Projectile
 from playercontroller import Movement
@@ -17,6 +19,8 @@ class PlayerPlatform:
                               self.BOTTOM_SPACING)
         self.image = self.sprite_sheet.image_by_name(self.platform_sprites['small'])
         self.projectile = Projectile(self.screen, self.sprite_sheet, Projectile.types["small"])
+        self.projectile_sprite_group = pygame.sprite.Group()
+        self.projectile_sprite_group.add(self.projectile)
 
     def get_position(self):
         return self.position
@@ -41,8 +45,8 @@ class PlayerPlatform:
     def fire(self):
         self.projectile.fire()
 
-    def update(self, delta_t):
+    def update(self, delta_t, blocks_group):
         rectangle = self.image.get_rect()
         rectangle.center = self.position
         self.screen.blit(self.image, rectangle)
-        self.projectile.update(delta_t)
+        self.projectile.update(delta_t, blocks_group)

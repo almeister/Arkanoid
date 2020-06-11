@@ -1,16 +1,18 @@
+import pygame
 from pygame.math import Vector2
 from playercontroller import Movement
 
 
-class Projectile:
+class Projectile(pygame.sprite.Sprite):
     types = {'small': 'SmallBall.png'}
     FLIGHT_SPEED = 800
     LAUNCH_ANGLE_INCREMENT = 3
 
     def __init__(self, screen, sprite_sheet, sprite_name):
+        pygame.sprite.Sprite.__init__(self)
         self.screen = screen
         self.image = sprite_sheet.image_by_name(sprite_name)
-        self.position = Vector2(0, 0)
+        self.rect = self.image.get_rect()
         self.flight_speed = 0
         self.launch_angle = 90
         self.movement = Movement.IDLE
@@ -20,7 +22,7 @@ class Projectile:
         return self.image.get_rect().size
 
     def set_position(self, position):
-        self.position = position
+        self.rect.center = position
 
     def fire(self):
         self.direction = Vector2(100, 0).rotate(self.launch_angle - 180)
@@ -48,15 +50,19 @@ class Projectile:
         self.launch_angle = 90
         self.direction = Vector2(0, 0)
 
-    def update(self, delta_t):
-        if not self.screen.get_rect().contains((self.position, self.image.get_rect().size)):
+    def any_collisions(self, group):
+        return pygame.sprite.spritecollideany(self, group)
+
+    def update(self, delta_t, blocks_group):
+        if not self.screen.get_rect().contains(self.rect):
             self.reset_flight()
+        elif self.is_in_flight():
+            if self.any_collisions(blocks_group):
+                # TODO: Destroy block
+                self.direction = self.direction.reflect(Vector2(0, 1))
 
-        if self.is_in_flight():
             distance = self.flight_speed * delta_t / 1000
-            self.position = self.position + distance * self.direction.normalize()
+            self.rect.center = self.rect.center + distance * self.direction.normalize()
 
-        rectangle = self.image.get_rect()
-        rectangle.center = self.position
-        self.screen.blit(self.image, rectangle)
+        self.screen.blit(self.image, self.rect)
 

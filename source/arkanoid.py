@@ -44,7 +44,7 @@ class Arkanoid:
 
         self.platform.move(self.player_controller.movement, delta_t)
 
-        self.platform.update(delta_t)
+        self.platform.update(delta_t, self.blocks.sprite_group)
         self.blocks.update()
 
         pygame.display.flip()
