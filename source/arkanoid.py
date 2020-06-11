@@ -32,17 +32,16 @@ class Arkanoid:
 
     def run(self):
         while True:
-            self.player_controller.update()
-            self.update()
+            delta_t = self.clock.tick(60)
+            self.update(delta_t)
 
-            self.clock.tick(60)
-
-    def update_movement(self):
-        self.platform.move(self.player_controller.get_movement())
-
-    def update(self):
+    def update(self, delta_t):
         self.screen.fill(self.settings.bg_color)
-        self.update_movement()
+
+        self.player_controller.update()
+
+        self.platform.move(self.player_controller.movement)
+
         self.platform.update()
         self.blocks.update()
 

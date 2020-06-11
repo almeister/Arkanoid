@@ -11,7 +11,6 @@ class Movement(Enum):
 
 
 class PlayerController:
-    movement_speed = 15
 
     def __init__(self, on_fire):
         self.movement = Movement.IDLE
@@ -36,13 +35,6 @@ class PlayerController:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     self.movement = Movement.IDLE
 
-    def get_movement(self):
-        if self.movement == Movement.LEFT:
-            return -self.movement_speed
-        elif self.movement == Movement.RIGHT:
-            return self.movement_speed
-        else:
-            return 0
 
     def update(self):
         self.poll_events()

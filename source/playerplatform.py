@@ -1,13 +1,14 @@
 import operator
 
 from cartesiantypes import Point
-
 from projectile import Projectile
+from playercontroller import Movement
 
 
 class PlayerPlatform:
     platform_sprites = {'small': 'SmallPlatform.png', 'medium': 'MediumPlatform.png', 'large': 'LargePlatform.png'}
     BOTTOM_SPACING = 80
+    MOVEMENT_SPEED = 15
 
     def __init__(self, screen, sprite_sheet):
         # TODO: Access screen as global singleton?
@@ -21,12 +22,19 @@ class PlayerPlatform:
     def get_position(self):
         return self.position  # TODO: Test getting public members as attributes
 
-    def move(self, delta):
-        self.position = tuple(map(operator.add, self.position, (delta, 0)))
-        projectile_size = self.projectile.get_ball_size()
-        projectile_position = Point(self.position[0], self.position[1] - projectile_size[0])
+    def move(self, movement):
+        distance = 0
+        if movement == Movement.LEFT:
+            distance = -self.MOVEMENT_SPEED
+        elif movement == Movement.RIGHT:
+            distance = self.MOVEMENT_SPEED
+
+        self.position = tuple(map(operator.add, self.position, (distance, 0)))
+
         if not self.projectile.is_in_flight():
-            self.projectile.update_launch_angle(delta)
+            projectile_size = self.projectile.get_size()
+            projectile_position = Point(self.position[0], self.position[1] - projectile_size[0])
+            self.projectile.update_launch_angle(distance)
             self.projectile.set_position(projectile_position)
 
     def fire(self):

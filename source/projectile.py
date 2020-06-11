@@ -17,7 +17,7 @@ class Projectile:
         self.delta = 0
         self.direction = Vector2(0, 0)
 
-    def get_ball_size(self):
+    def get_size(self):
         return self.image.get_rect().size
 
     def set_position(self, position):
