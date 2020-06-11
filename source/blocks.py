@@ -1,6 +1,5 @@
 from block import Block
 from cartesiantypes import Point
-from cartesiantypes import Size
 
 
 class Blocks:
@@ -12,13 +11,11 @@ class Blocks:
         self.screen = screen
         self.sprite_sheet = sprite_sheet
         self.blocks = []
-        self.block_size = Size(67, 27)
-        self.spacing = Size(5, 0)
 
-    def place_blocks(self, origin, blocks):
+    def place_blocks(self, origin, block_size, blocks):
         for block in blocks:
-            block_pos = Point(origin["x"] + block['grid_position']['x'] * self.block_size.w,
-                              origin["y"] + block['grid_position']['y'] * self.block_size.h)
+            block_pos = Point(origin["x"] + block['grid_position']['x'] * block_size["w"],
+                              origin["y"] + block['grid_position']['y'] * block_size["h"])
             self.place_block(block["type"], block_pos)
 
     def place_block(self, block_type, position):

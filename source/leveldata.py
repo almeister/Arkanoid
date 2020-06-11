@@ -8,6 +8,9 @@ class LevelData:
     def get_grid(self):
         return self.level_data["grid"]
 
+    def get_block_size(self):
+        return self.level_data["block_size"]
+
     def get_blocks(self):
         return self.level_data["blocks"]
 

@@ -29,7 +29,7 @@ class Arkanoid:
     def load_level(self):
         level_loader = LevelLoader(self.settings.levels_path)
         level_data = level_loader.load_level(1)
-        self.blocks.place_blocks(level_data.get_grid()["origin"], level_data.get_blocks())
+        self.blocks.place_blocks(level_data.get_grid()["origin"], level_data.get_block_size(), level_data.get_blocks())
 
     def run(self):
         delta_t = 0
