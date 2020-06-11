@@ -8,22 +8,23 @@ from spritesheet import SpriteSheet
 from levelloader import LevelLoader
 
 
+def setup_pygame():
+    pygame.init()
+    pygame.display.set_caption("Arkanoid")
+
+
 class Arkanoid:
 
     def __init__(self):
-        self.setup_pygame()
+        setup_pygame()
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.clock = pygame.time.Clock()
         self.sprite_sheet = SpriteSheet(self.settings.sprites_path, "sh_2.json")
         self.blocks = Blocks(self.screen, self.sprite_sheet)
-        self.platform = PlayerPlatform(self.screen, self.sprite_sheet)
         self.player_controller = PlayerController(lambda: self.platform.fire())
+        self.platform = PlayerPlatform(self.screen, self.sprite_sheet)
         self.load_level()
-
-    def setup_pygame(self):
-        pygame.init()
-        pygame.display.set_caption("Arkanoid")
 
     def load_level(self):
         level_loader = LevelLoader(self.settings.levels_path)
@@ -31,18 +32,19 @@ class Arkanoid:
         self.blocks.place_blocks(level_data.get_grid()["origin"], level_data.get_blocks())
 
     def run(self):
+        delta_t = 0
         while True:
-            delta_t = self.clock.tick(60)
             self.update(delta_t)
+            delta_t = self.clock.tick(60)
 
     def update(self, delta_t):
         self.screen.fill(self.settings.bg_color)
 
         self.player_controller.update()
 
-        self.platform.move(self.player_controller.movement)
+        self.platform.move(self.player_controller.movement, delta_t)
 
-        self.platform.update()
+        self.platform.update(delta_t)
         self.blocks.update()
 
         pygame.display.flip()
