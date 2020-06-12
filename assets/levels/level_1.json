@@ -1,8 +1,8 @@
 {
 	"grid": {
 		"origin": {
-			"x": 375,
-			"y": 100
+			"x": 50,
+			"y": 400
 		},
 		"w": 8,
 		"h": 2
@@ -66,7 +66,8 @@
 				"x": 7,
 				"y": 0
 			}
-		},{
+		},
+		{
 			"type": "red",
 			"grid_position": {
 				"x": 0,
@@ -120,6 +121,174 @@
 			"grid_position": {
 				"x": 7,
 				"y": 1
+			}
+		},
+		{
+			"type": "blue",
+			"grid_position": {
+				"x": 0,
+				"y": 2
+			}
+		},
+		{
+			"type": "blue",
+			"grid_position": {
+				"x": 1,
+				"y": 2
+			}
+		},
+		{
+			"type": "blue",
+			"grid_position": {
+				"x": 2,
+				"y": 2
+			}
+		},
+		{
+			"type": "blue",
+			"grid_position": {
+				"x": 3,
+				"y": 2
+			}
+		},
+		{
+			"type": "blue",
+			"grid_position": {
+				"x": 4,
+				"y": 2
+			}
+		},
+		{
+			"type": "blue",
+			"grid_position": {
+				"x": 5,
+				"y": 2
+			}
+		},
+		{
+			"type": "blue",
+			"grid_position": {
+				"x": 6,
+				"y": 2
+			}
+		},
+		{
+			"type": "blue",
+			"grid_position": {
+				"x": 7,
+				"y": 2
+			}
+		},
+		{
+			"type": "green",
+			"grid_position": {
+				"x": 0,
+				"y": 3
+			}
+		},
+		{
+			"type": "green",
+			"grid_position": {
+				"x": 1,
+				"y": 3
+			}
+		},
+		{
+			"type": "green",
+			"grid_position": {
+				"x": 2,
+				"y": 3
+			}
+		},
+		{
+			"type": "green",
+			"grid_position": {
+				"x": 3,
+				"y": 3
+			}
+		},
+		{
+			"type": "green",
+			"grid_position": {
+				"x": 4,
+				"y": 3
+			}
+		},
+		{
+			"type": "green",
+			"grid_position": {
+				"x": 5,
+				"y": 3
+			}
+		},
+		{
+			"type": "green",
+			"grid_position": {
+				"x": 6,
+				"y": 3
+			}
+		},
+		{
+			"type": "green",
+			"grid_position": {
+				"x": 7,
+				"y": 3
+			}
+		},
+		{
+			"type": "orange",
+			"grid_position": {
+				"x": 0,
+				"y": 4
+			}
+		},
+		{
+			"type": "orange",
+			"grid_position": {
+				"x": 1,
+				"y": 4
+			}
+		},
+		{
+			"type": "orange",
+			"grid_position": {
+				"x": 2,
+				"y": 4
+			}
+		},
+		{
+			"type": "orange",
+			"grid_position": {
+				"x": 3,
+				"y": 4
+			}
+		},
+		{
+			"type": "orange",
+			"grid_position": {
+				"x": 4,
+				"y": 4
+			}
+		},
+		{
+			"type": "orange",
+			"grid_position": {
+				"x": 5,
+				"y": 4
+			}
+		},
+		{
+			"type": "orange",
+			"grid_position": {
+				"x": 6,
+				"y": 4
+			}
+		},
+		{
+			"type": "orange",
+			"grid_position": {
+				"x": 7,
+				"y": 4
 			}
 		}
 	]

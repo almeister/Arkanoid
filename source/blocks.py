@@ -1,7 +1,6 @@
-import pygame
-
 from block import Block
 from cartesiantypes import Point
+from spritegroup import SpriteGroup, SpriteGroupType
 
 
 class Blocks:
@@ -13,7 +12,7 @@ class Blocks:
         self.screen = screen
         self.sprite_sheet = sprite_sheet
         self.blocks = []
-        self.sprite_group = pygame.sprite.Group()
+        self.sprite_group = SpriteGroup(SpriteGroupType.BLOCKS)
 
     def place_blocks(self, origin, block_size, blocks):
         for block in blocks:

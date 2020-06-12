@@ -10,7 +10,7 @@ class PlayerPlatform(pygame.sprite.Sprite):
     BOTTOM_SPACING = 80
     MOVEMENT_SPEED = 900
 
-    def __init__(self, screen, sprite_sheet):
+    def __init__(self, screen, sprite_sheet, collision_detector):
         pygame.sprite.Sprite.__init__(self)
         self.screen = screen
         self.sprite_sheet = sprite_sheet
@@ -18,9 +18,7 @@ class PlayerPlatform(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (screen.get_rect().midbottom[0], screen.get_rect().midbottom[1] -
                             self.BOTTOM_SPACING)
-        self.projectile = Projectile(self.screen, self.sprite_sheet, Projectile.types["small"])
-        self.projectile_sprite_group = pygame.sprite.Group()
-        self.projectile_sprite_group.add(self.projectile)
+        self.projectile = Projectile(self.screen, self.sprite_sheet, Projectile.types["small"], collision_detector)
 
     def move(self, movement, delta_t):
         distance = self.MOVEMENT_SPEED * delta_t / 1000

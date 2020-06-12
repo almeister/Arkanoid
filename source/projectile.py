@@ -1,14 +1,18 @@
 import pygame
 from pygame.math import Vector2
+
+from collisiondetector import CollisionDetector
+from observer import Observer
 from playercontroller import Movement
+from spritegroup import SpriteGroupType
 
 
-class Projectile(pygame.sprite.Sprite):
+class Projectile(pygame.sprite.Sprite, Observer):
     types = {'small': 'SmallBall.png'}
     FLIGHT_SPEED = 800
     LAUNCH_ANGLE_INCREMENT = 3
 
-    def __init__(self, screen, sprite_sheet, sprite_name):
+    def __init__(self, screen, sprite_sheet, sprite_name, collision_detector):
         pygame.sprite.Sprite.__init__(self)
         self.screen = screen
         self.image = sprite_sheet.image_by_name(sprite_name)
@@ -17,6 +21,17 @@ class Projectile(pygame.sprite.Sprite):
         self.launch_angle = 90
         self.movement = Movement.IDLE
         self.direction = Vector2(0, 0)
+        collision_detector.add_listener(self)
+        collision_detector.add_sprite(self)
+
+    def on_observed(self, collision_detector: CollisionDetector) -> None:
+        if collision_detector.collided_sprite_group_type == SpriteGroupType.BLOCKS:
+            collided_sprite = collision_detector.collided_sprites[0]
+            if collided_sprite.rect.bottom > self.rect.top:
+                self.direction = self.direction.reflect(Vector2(0, 1))
+            elif collided_sprite.rect.right < self.rect.left:
+                self.direction = self.direction.reflect(Vector2(1, 0))
+            # TODO: Destroy block
 
     def get_size(self):
         return self.image.get_rect().size
@@ -53,14 +68,10 @@ class Projectile(pygame.sprite.Sprite):
     def any_collisions(self, group):
         return pygame.sprite.spritecollideany(self, group)
 
-    def update(self, delta_t, blocks_group):
+    def update(self, delta_t, group):
         if not self.screen.get_rect().contains(self.rect):
             self.reset_flight()
         elif self.is_in_flight():
-            if self.any_collisions(blocks_group):
-                # TODO: Destroy block
-                self.direction = self.direction.reflect(Vector2(0, 1))
-
             distance = self.flight_speed * delta_t / 1000
             self.rect.center = self.rect.center + distance * self.direction.normalize()
 
