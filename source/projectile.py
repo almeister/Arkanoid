@@ -21,7 +21,7 @@ class Projectile(pygame.sprite.Sprite, Observer):
         self.rect = self.image.get_rect()
         self.previous_rect = self.image.get_rect()
         self.flight_speed = 0
-        self.launch_angle = 45
+        self.launch_angle = 45 # TODO: Set to 90
         self.movement = Movement.IDLE
         self.direction = Vector2(0, 0)
         collision_detector.add_listener(self)
@@ -31,24 +31,29 @@ class Projectile(pygame.sprite.Sprite, Observer):
         if collision_detector.collided_sprite_group_type == SpriteGroupType.BLOCKS:
             collided_sprite = collision_detector.collided_sprites[0]
 
-            # TODO: Back out of collision to avoid multiple reflections
-
-            prev_pos_to_collided_object_corner = Vector2(tuple(map(operator.sub, self.previous_rect.topleft, collided_sprite.rect.bottomright)))
-            current_pos_to_previous_pos = Vector2(tuple(map(operator.sub, self.rect.topleft, self.previous_rect.topleft)))
-            # Protect against zero division
-            if 0 in prev_pos_to_collided_object_corner.xy:
-                prev_pos_to_collided_object_corner -= self.direction.normalize()
-            approach_ratio = abs((current_pos_to_previous_pos.y / current_pos_to_previous_pos.x) / \
-                                 (prev_pos_to_collided_object_corner.y / prev_pos_to_collided_object_corner.x))
-            if approach_ratio < 1:
+            # TODO: Fix arguments warning
+            prev_pos_to_collided_corner = Vector2(tuple(map(operator.sub, self.previous_rect.topleft,
+                                                            collided_sprite.rect.bottomright)))
+            current_pos_to_previous_pos = Vector2(tuple(map(operator.sub, self.rect.topleft,
+                                                            self.previous_rect.topleft)))
+            if prev_pos_to_collided_corner.y <= 0:
                 # Projectile hit right of collided sprite
                 self.direction = self.direction.reflect(Vector2(1, 0))
-            elif approach_ratio == 1:
-                # Projectile hit the bottom right corner of collided sprite
-                self.direction = self.direction.reflect(Vector2(1, 1))
-            elif approach_ratio > 1:
+            elif prev_pos_to_collided_corner.x <= 0:
                 # Projectile hit the bottom of collided sprite
                 self.direction = self.direction.reflect(Vector2(0, -1))
+            else:
+                approach_ratio = abs((current_pos_to_previous_pos.y / current_pos_to_previous_pos.x) / \
+                                     (prev_pos_to_collided_corner.y / prev_pos_to_collided_corner.x))
+                if approach_ratio < 1:
+                    # Projectile hit right of collided sprite
+                    self.direction = self.direction.reflect(Vector2(1, 0))
+                elif approach_ratio == 1:
+                    # Projectile hit the bottom-right corner of collided sprite
+                    self.direction = self.direction.reflect(Vector2(1, 1))
+                elif approach_ratio > 1:
+                    # Projectile hit the bottom of collided sprite
+                    self.direction = self.direction.reflect(Vector2(0, -1))
 
             # point_size = (1, 1)
             # projectile_points = {'topleft': (self.rect.topleft, point_size),
@@ -87,8 +92,9 @@ class Projectile(pygame.sprite.Sprite, Observer):
         self.rect.center = position
 
     def fire(self):
-        self.direction = Vector2(100, 0).rotate(self.launch_angle - 180)
-        self.flight_speed = self.FLIGHT_SPEED
+        if not self.is_in_flight():
+            self.direction = Vector2(100, 0).rotate(self.launch_angle - 180)
+            self.flight_speed = self.FLIGHT_SPEED
 
     def is_in_flight(self):
         return self.flight_speed > 0
@@ -110,7 +116,7 @@ class Projectile(pygame.sprite.Sprite, Observer):
     def reset_flight(self):
         self.movement = Movement.IDLE
         self.flight_speed = 0
-        self.launch_angle = 90
+        self.launch_angle = 45 # TODO: Set to 90
         self.direction = Vector2(0, 0)
 
     def any_collisions(self, group):
