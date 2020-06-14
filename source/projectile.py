@@ -14,7 +14,7 @@ class Projectile(pygame.sprite.Sprite, Observer):
     FLIGHT_SPEED = 800
     LAUNCH_ANGLE_INCREMENT = 3
 
-    TEST_ANGLE = 60
+    TEST_ANGLE = 150
 
     def __init__(self, screen, sprite_sheet, sprite_name, collision_detector):
         pygame.sprite.Sprite.__init__(self)
@@ -38,26 +38,50 @@ class Projectile(pygame.sprite.Sprite, Observer):
                                   (self.rect.topright, point_size),     # 1
                                   (self.rect.bottomright, point_size),  # 2
                                   (self.rect.bottomleft, point_size)]   # 3
+
             corners_in_collision = collided_sprite.rect.collidelistall(projectile_corners)
-            if 0 in corners_in_collision:
-                prev_pos_to_collided_corner = Vector2(self.previous_rect.topleft) - \
-                                              Vector2(collided_sprite.rect.bottomright)
-                current_pos_to_previous_pos = Vector2(self.rect.topleft) - Vector2(self.previous_rect.topleft)
-                if prev_pos_to_collided_corner.y <= 0:
-                    # Projectile hit right of collided sprite
-                    self.direction = self.direction.reflect(Vector2(1, 0))
-                elif prev_pos_to_collided_corner.x <= 0:
-                    # Projectile hit the bottom of collided sprite
-                    self.direction = self.direction.reflect(Vector2(0, 1))
-                else:
-                    approach_ratio = abs((current_pos_to_previous_pos.y / current_pos_to_previous_pos.x) / \
-                                         (prev_pos_to_collided_corner.y / prev_pos_to_collided_corner.x))
-                    if approach_ratio >= 1:
-                        # Projectile hit right of collided sprite
-                        self.direction = self.direction.reflect(Vector2(1, 0))
-                    elif approach_ratio < 1:
-                        # Projectile hit the bottom of collided sprite
-                        self.direction = self.direction.reflect(Vector2(0, 1))
+            # corners_in_collision = collided_sprite.rect.collidelistall(projectile_corners)
+            # if 0 in corners_in_collision and 1 in corners_in_collision:
+            #     # Projectile hit the bottom of collided sprite
+            #     self.direction = self.direction.reflect(Vector2(0, 1))
+            # elif 0 in corners_in_collision:
+            #     prev_pos_to_collided_corner = Vector2(self.previous_rect.topleft) - \
+            #                                   Vector2(collided_sprite.rect.bottomright)
+            #     current_pos_to_previous_pos = Vector2(self.rect.topleft) - Vector2(self.previous_rect.topleft)
+            #     if prev_pos_to_collided_corner.y <= 0:
+            #         # Projectile hit right of collided sprite
+            #         self.direction = self.direction.reflect(Vector2(1, 0))
+            #     elif prev_pos_to_collided_corner.x <= 0:
+            #         # Projectile hit the bottom of collided sprite
+            #         self.direction = self.direction.reflect(Vector2(0, 1))
+            #     else:
+            #         approach_ratio = abs((current_pos_to_previous_pos.y / current_pos_to_previous_pos.x) / \
+            #                              (prev_pos_to_collided_corner.y / prev_pos_to_collided_corner.x))
+            #         if approach_ratio >= 1:
+            #             # Projectile hit right of collided sprite
+            #             self.direction = self.direction.reflect(Vector2(1, 0))
+            #         elif approach_ratio < 1:
+            #             # Projectile hit the bottom of collided sprite
+            #             self.direction = self.direction.reflect(Vector2(0, 1))
+            # elif 1 in corners_in_collision:
+            #     prev_pos_to_collided_corner = Vector2(self.previous_rect.topright) - \
+            #                                   Vector2(collided_sprite.rect.bottomleft)
+            #     current_pos_to_previous_pos = Vector2(self.rect.topright) - Vector2(self.previous_rect.topright)
+            #     if prev_pos_to_collided_corner.x <= 0:
+            #         # Projectile hit left of collided sprite
+            #         self.direction = self.direction.reflect(Vector2(-1, 0))
+            #     elif prev_pos_to_collided_corner.y <= 0:
+            #         # Projectile hit the bottom of collided sprite
+            #         self.direction = self.direction.reflect(Vector2(0, 1))
+            #     else:
+            #         approach_ratio = abs((current_pos_to_previous_pos.y / current_pos_to_previous_pos.x) / \
+            #                              (prev_pos_to_collided_corner.y / prev_pos_to_collided_corner.x))
+            #         if approach_ratio <= 1:
+            #             # Projectile hit left of collided sprite
+            #             self.direction = self.direction.reflect(Vector2(-1, 0))
+            #         elif approach_ratio > 1:
+            #             # Projectile hit the bottom of collided sprite
+            #             self.direction = self.direction.reflect(Vector2(0, 1))
 
     def get_size(self):
         return self.image.get_rect().size
