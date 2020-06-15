@@ -21,6 +21,7 @@ class Projectile(pygame.sprite.Sprite, Observer):
         self.screen = screen
         self.image = sprite_sheet.image_by_name(sprite_name)
         self.rect: pygame.Rect = self.image.get_rect()
+        self.radius = self.rect.h / 2
         self.previous_rect: pygame.Rect = self.image.get_rect()
         self.flight_speed = 0
         self.launch_angle = self.TEST_ANGLE  # TODO: Set to 90
@@ -32,12 +33,11 @@ class Projectile(pygame.sprite.Sprite, Observer):
     def on_observed(self, collision_detector: CollisionDetector) -> None:
         if collision_detector.collided_sprite_group_type == SpriteGroupType.BLOCKS:
             collided_sprite = collision_detector.collided_sprites[0]
-
             point_size = (1, 1)
-            projectile_corners = [(self.rect.topleft, point_size),      # 0
-                                  (self.rect.topright, point_size),     # 1
+            projectile_corners = [(self.rect.topleft, point_size),  # 0
+                                  (self.rect.topright, point_size),  # 1
                                   (self.rect.bottomright, point_size),  # 2
-                                  (self.rect.bottomleft, point_size)]   # 3
+                                  (self.rect.bottomleft, point_size)]  # 3
 
             corners_in_collision = collided_sprite.rect.collidelistall(projectile_corners)
             # corners_in_collision = collided_sprite.rect.collidelistall(projectile_corners)
