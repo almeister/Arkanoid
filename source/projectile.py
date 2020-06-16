@@ -14,7 +14,7 @@ class Projectile(pygame.sprite.Sprite, Observer):
     FLIGHT_SPEED = 800
     LAUNCH_ANGLE_INCREMENT = 3
 
-    TEST_ANGLE = 150
+    TEST_ANGLE = 50
 
     def __init__(self, screen, sprite_sheet, sprite_name, collision_detector):
         pygame.sprite.Sprite.__init__(self)
@@ -33,13 +33,48 @@ class Projectile(pygame.sprite.Sprite, Observer):
     def on_observed(self, collision_detector: CollisionDetector) -> None:
         if collision_detector.collided_sprite_group_type == SpriteGroupType.BLOCKS:
             collided_sprite = collision_detector.collided_sprites[0]
-            point_size = (1, 1)
-            projectile_corners = [(self.rect.topleft, point_size),  # 0
-                                  (self.rect.topright, point_size),  # 1
-                                  (self.rect.bottomright, point_size),  # 2
-                                  (self.rect.bottomleft, point_size)]  # 3
 
-            corners_in_collision = collided_sprite.rect.collidelistall(projectile_corners)
+            #  Find closest corner to projectile
+            closest_distance = Vector2(self.screen.get_rect().size).magnitude()
+            closest_corner = ""
+            corners = {"topleft": Vector2(collided_sprite.rect.topleft),
+                       "topright": Vector2(collided_sprite.rect.topright),
+                       "bottomright": Vector2(collided_sprite.rect.bottomright),
+                       "bottomleft": Vector2(collided_sprite.rect.bottomleft)}
+            for key, corner in corners.items():
+                distance = (Vector2(self.rect.center) - corner).magnitude()
+                if distance < closest_distance:
+                    closest_corner = key
+                    closest_distance = distance
+
+            #  Reflect projectile around corner
+            a = collided_sprite.rect.w / collided_sprite.rect.h
+            b = (self.rect.centerx - getattr(collided_sprite.rect, closest_corner)[0]) / \
+                (self.rect.centery - getattr(collided_sprite.rect, closest_corner)[1])
+            #  TODO: move projectile outside of block to prevent multiple reflections
+            if closest_corner == "bottomright":
+                if b < a:
+                    # Projectile hit the bottom of collided sprite
+                    self.direction = self.direction.reflect(Vector2(0, 1))
+                elif b >= a:
+                    # Projectile hit right of collided sprite
+                    self.direction = self.direction.reflect(Vector2(1, 0))
+            elif closest_corner == "topright":
+                if b < a:
+                    # Projectile hit the top of collided sprite
+                    self.direction = self.direction.reflect(Vector2(0, -1))
+                elif b >= a:
+                    # Projectile hit right of collided sprite
+                    self.direction = self.direction.reflect(Vector2(1, 0))
+
+
+            # point_size = (1, 1)
+            # projectile_corners = [(self.rect.topleft, point_size),  # 0
+            #                       (self.rect.topright, point_size),  # 1
+            #                       (self.rect.bottomright, point_size),  # 2
+            #                       (self.rect.bottomleft, point_size)]  # 3
+            #
+            # corners_in_collision = collided_sprite.rect.collidelistall(projectile_corners)
             # corners_in_collision = collided_sprite.rect.collidelistall(projectile_corners)
             # if 0 in corners_in_collision and 1 in corners_in_collision:
             #     # Projectile hit the bottom of collided sprite
