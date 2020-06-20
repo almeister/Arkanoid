@@ -1,7 +1,6 @@
-import operator
-
 import pygame
 
+from typing import Tuple
 from pygame.math import Vector2
 from collisiondetector import CollisionDetector
 from observer import Observer
@@ -33,83 +32,21 @@ class Projectile(pygame.sprite.Sprite, Observer):
     def on_observed(self, collision_detector: CollisionDetector) -> None:
         if collision_detector.collided_sprite_group_type == SpriteGroupType.BLOCKS:
             collided_sprite = collision_detector.collided_sprites[0]
+            test_surfaces = [
+                TestSurface("top", (0, -1), collided_sprite.rect.midtop),
+                TestSurface("right", (1, 0), collided_sprite.rect.midright),
+                TestSurface("bottom", (0, 1), collided_sprite.rect.midbottom),
+                TestSurface("left", (-1, 0), collided_sprite.rect.midleft)
+            ]
 
-            #  Find closest corner to projectile
-            closest_distance = Vector2(self.screen.get_rect().size).magnitude()
-            closest_corner = ""
-            corners = {"topleft": Vector2(collided_sprite.rect.topleft),
-                       "topright": Vector2(collided_sprite.rect.topright),
-                       "bottomright": Vector2(collided_sprite.rect.bottomright),
-                       "bottomleft": Vector2(collided_sprite.rect.bottomleft)}
-            for key, corner in corners.items():
-                distance = (Vector2(self.rect.center) - corner).magnitude()
-                if distance < closest_distance:
-                    closest_corner = key
-                    closest_distance = distance
-
-            #  Find side of incidence and reflect
-            if closest_corner == "bottomright":
-                surface_normal = Vector2(0, 1)
-                surface_test_point = Vector2(collided_sprite.rect.midbottom)
-                if self.projectile_intersects(surface_test_point, surface_normal):
-                    self.reflect(surface_normal)
+            for test_surface in test_surfaces:
+                if self.projectile_intersects(test_surface.surface_test_point, test_surface.surface_normal):
+                    self.reflect(test_surface.surface_normal)
                     return
-
-                surface_normal = Vector2(1, 0)
-                surface_test_point = Vector2(collided_sprite.rect.midright)
-                if self.projectile_intersects(surface_test_point, surface_normal):
-                    self.reflect(surface_normal)
-                    return
-
-                # # Default: Reflect projectile to the right
-                # self.direction = self.direction.reflect(Vector2(1, 0))
-            elif closest_corner == "topright":
-                surface_normal = Vector2(1, 0)
-                surface_test_point = Vector2(collided_sprite.rect.midright)
-                if self.projectile_intersects(surface_test_point, surface_normal):
-                    self.reflect(surface_normal)
-                    return
-
-                surface_normal = Vector2(0, -1)
-                surface_test_point = Vector2(collided_sprite.rect.midtop)
-                if self.projectile_intersects(surface_test_point, surface_normal):
-                    self.reflect(surface_normal)
-                    return
-
-                # # Default: Reflect projectile to the right
-                # self.direction = self.direction.reflect(Vector2(1, 0))
-            elif closest_corner == "topleft":
-                surface_normal = Vector2(0, -1)
-                surface_test_point = Vector2(collided_sprite.rect.midtop)
-                if self.projectile_intersects(surface_test_point, surface_normal):
-                    self.reflect(surface_normal)
-                    return
-
-                surface_normal = Vector2(-1, 0)
-                surface_test_point = Vector2(collided_sprite.rect.midleft)
-                if self.projectile_intersects(surface_test_point, surface_normal):
-                    self.reflect(surface_normal)
-                    return
-
-                # # Default: Reflect projectile to the left
-                # self.direction = self.direction.reflect(Vector2(1, 0))
-            elif closest_corner == "bottomleft":
-                surface_normal = Vector2(-1, 0)
-                surface_test_point = Vector2(collided_sprite.rect.midleft)
-                if self.projectile_intersects(surface_test_point, surface_normal):
-                    self.reflect(surface_normal)
-                    return
-
-                surface_normal = Vector2(0, 1)
-                surface_test_point = Vector2(collided_sprite.rect.midbottom)
-                if self.projectile_intersects(surface_test_point, surface_normal):
-                    self.reflect(surface_normal)
-                    return
-
-                # # Default: Reflect projectile to the left
-                # self.direction = self.direction.reflect(Vector2(1, 0))
 
     def projectile_intersects(self, surface_test_point, surface_normal):
+        # Line-plane intersection algorithm based on dot-product comparison. For more info:
+        # https://www.gamedev.net/tutorials/programming/math-and-physics/practical-use-of-vector-math-in-games-r2968/
         projectile_edge_point = Vector2(self.rect.center) - self.radius * surface_normal
         previous_projectile_edge_point = Vector2(self.previous_rect.center) - self.radius * surface_normal
         projectile_collision_path = projectile_edge_point - previous_projectile_edge_point
@@ -168,3 +105,12 @@ class Projectile(pygame.sprite.Sprite, Observer):
             self.rect.center = self.rect.center + distance * self.direction.normalize()
 
         self.screen.blit(self.image, self.rect)
+
+
+class TestSurface:
+
+    def __init__(self, name: str, surface_normal: Tuple[int, int], surface_test_point: Tuple[int, int]):
+        self.name = name
+        self.surface_normal = Vector2(surface_normal)
+        self.surface_test_point = Vector2(surface_test_point)
+
