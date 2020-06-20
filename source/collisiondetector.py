@@ -51,5 +51,4 @@ class CollisionDetector(Observable):
                 self.collided_sprites = pygame.sprite.spritecollide(sprite, sprite_group, False,
                                                                     self.collided_with_circle)
                 if self.collided_sprites:
-                    # TODO: handle simultaneous collisions
                     self.notify()
