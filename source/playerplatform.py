@@ -3,6 +3,7 @@ import pygame
 
 from projectile import Projectile
 from playercontroller import Movement
+from spritegroup import SpriteGroup, SpriteGroupType
 
 
 class PlayerPlatform(pygame.sprite.Sprite):
@@ -12,12 +13,14 @@ class PlayerPlatform(pygame.sprite.Sprite):
 
     def __init__(self, screen, sprite_sheet, collision_detector):
         pygame.sprite.Sprite.__init__(self)
+        self.sprite_group = SpriteGroup(SpriteGroupType.PLATFORM)
         self.screen = screen
         self.sprite_sheet = sprite_sheet
         self.image = self.sprite_sheet.image_by_name(self.platform_sprites['small'])
         self.rect = self.image.get_rect()
         self.rect.center = (screen.get_rect().midbottom[0], screen.get_rect().midbottom[1] -
                             self.BOTTOM_SPACING)
+        self.sprite_group.add(self)
         self.projectile = Projectile(self.screen, self.sprite_sheet, Projectile.types["small"], collision_detector)
 
     def move(self, movement, delta_t):

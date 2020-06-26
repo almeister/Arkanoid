@@ -1,5 +1,7 @@
 import pygame
 
+from pygame.sprite import Sprite
+
 from typing import Tuple
 from pygame.math import Vector2
 from collisiondetector import CollisionDetector
@@ -8,27 +10,31 @@ from playercontroller import Movement
 from spritegroup import SpriteGroupType
 
 
-class Projectile(pygame.sprite.Sprite, Observer):
+class Projectile(Sprite, Observer):
     types = {'small': 'SmallBall.png'}
-    FLIGHT_SPEED = 800
+    FLIGHT_SPEED = 500
     LAUNCH_ANGLE_INCREMENT = 3
+    REST_LAUNCH_ANGLE = 90
 
     def __init__(self, screen, sprite_sheet, sprite_name, collision_detector):
-        pygame.sprite.Sprite.__init__(self)
+        Sprite.__init__(self)
         self.screen = screen
         self.image = sprite_sheet.image_by_name(sprite_name)
         self.rect: pygame.Rect = self.image.get_rect()
         self.radius = self.rect.h / 2
         self.previous_rect: pygame.Rect = self.image.get_rect()
         self.flight_speed = 0
-        self.launch_angle = 90
+        self.launch_angle = self.REST_LAUNCH_ANGLE
         self.movement = Movement.IDLE
-        self.velocity = Vector2(0, 0)  # TODO: change name to velocity
+        self.velocity = Vector2(0, 0)
         collision_detector.add_listener(self)
         collision_detector.add_sprite(self)
 
     def on_observed(self, collision_detector: CollisionDetector) -> None:
-        if collision_detector.collided_sprite_group_type == SpriteGroupType.BLOCKS:
+        sprite_group = collision_detector.collided_sprite_group_type
+        if (sprite_group == SpriteGroupType.BLOCKS or
+                sprite_group == SpriteGroupType.BOUNDARIES or
+                sprite_group == SpriteGroupType.PLATFORM):
             for collided_sprite in collision_detector.collided_sprites:
                 test_surfaces = [
                     TestSurface("top", (0, -1), collided_sprite.rect.midtop),
@@ -43,8 +49,7 @@ class Projectile(pygame.sprite.Sprite, Observer):
                         return
 
     def projectile_intersects(self, surface_test_point, surface_normal):
-        # Line-plane intersection algorithm based on dot-product comparison. For more info:
-        # https://www.gamedev.net/tutorials/programming/math-and-physics/practical-use-of-vector-math-in-games-r2968/
+        # Line-plane intersection algorithm based on dot-product comparison.
         projectile_edge_point = Vector2(self.rect.center) - self.radius * surface_normal
         previous_projectile_edge_point = Vector2(self.previous_rect.center) - self.radius * surface_normal
         projectile_collision_path = projectile_edge_point - previous_projectile_edge_point
@@ -68,7 +73,7 @@ class Projectile(pygame.sprite.Sprite, Observer):
 
     def fire(self):
         if not self.is_in_flight():
-            self.velocity = Vector2(100, 0).rotate(self.launch_angle - 180)
+            self.velocity = Vector2(1, 0).rotate(self.launch_angle - 180)
             self.flight_speed = self.FLIGHT_SPEED
 
     def is_in_flight(self):
@@ -90,11 +95,8 @@ class Projectile(pygame.sprite.Sprite, Observer):
     def reset_flight(self):
         self.movement = Movement.IDLE
         self.flight_speed = 0
-        self.launch_angle = 90
+        self.launch_angle = self.REST_LAUNCH_ANGLE
         self.velocity = Vector2(0, 0)
-
-    def any_collisions(self, group):
-        return pygame.sprite.spritecollideany(self, group)
 
     def update(self, delta_t, group):
         self.previous_rect = self.rect.copy()

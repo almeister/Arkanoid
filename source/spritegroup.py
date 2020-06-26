@@ -5,7 +5,9 @@ from enum import Enum
 
 class SpriteGroupType(Enum):
     SPACE_BALL = 0,
-    BLOCKS = 1
+    BLOCKS = 1,
+    BOUNDARIES = 2,
+    PLATFORM = 3
 
 
 class SpriteGroup(pygame.sprite.Group):
