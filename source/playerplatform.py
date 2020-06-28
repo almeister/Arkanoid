@@ -1,18 +1,18 @@
 import operator
-import pygame
+from pygame.sprite import Sprite
 
 from projectile import Projectile
 from playercontroller import Movement
 from spritegroup import SpriteGroup, SpriteGroupType
 
 
-class PlayerPlatform(pygame.sprite.Sprite):
+class PlayerPlatform(Sprite):
     platform_sprites = {'small': 'SmallPlatform.png', 'medium': 'MediumPlatform.png', 'large': 'LargePlatform.png'}
     BOTTOM_SPACING = 80
     MOVEMENT_SPEED = 900
 
     def __init__(self, screen, sprite_sheet, collision_detector):
-        pygame.sprite.Sprite.__init__(self)
+        Sprite.__init__(self)
         self.sprite_group = SpriteGroup(SpriteGroupType.PLATFORM)
         self.screen = screen
         self.sprite_sheet = sprite_sheet

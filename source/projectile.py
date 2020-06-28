@@ -1,9 +1,7 @@
-import pygame
-
 from pygame.sprite import Sprite
+from pygame.math import Vector2
 
 from typing import Tuple
-from pygame.math import Vector2
 from collisiondetector import CollisionDetector
 from observer import Observer
 from playercontroller import Movement
@@ -20,9 +18,9 @@ class Projectile(Sprite, Observer):
         Sprite.__init__(self)
         self.screen = screen
         self.image = sprite_sheet.image_by_name(sprite_name)
-        self.rect: pygame.Rect = self.image.get_rect()
+        self.rect = self.image.get_rect()
         self.radius = self.rect.h / 2
-        self.previous_rect: pygame.Rect = self.image.get_rect()
+        self.previous_rect = self.image.get_rect()
         self.flight_speed = 0
         self.launch_angle = self.REST_LAUNCH_ANGLE
         self.movement = Movement.IDLE
@@ -64,9 +62,6 @@ class Projectile(Sprite, Observer):
     def reflect(self, surface_normal):
         self.velocity = self.velocity.reflect(surface_normal)
         self.rect.center += self.radius * surface_normal
-
-    def get_size(self):
-        return self.image.get_rect().size
 
     def set_position(self, position):
         self.rect.center = position
