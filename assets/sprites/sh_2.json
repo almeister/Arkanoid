@@ -64,6 +64,62 @@
 				"w": 27,
 				"h": 27
 			}
+		},
+		"PowerUpOrange.png": {
+			"frame": {
+				"x": 5,
+				"y": 115,
+				"w": 71,
+				"h": 63
+			}
+		},
+		"PowerUpRed.png": {
+			"frame": {
+				"x": 83,
+				"y": 115,
+				"w": 71,
+				"h": 63
+			}
+		},
+		"PowerUpGreen.png": {
+			"frame": {
+				"x": 163,
+				"y": 115,
+				"w": 71,
+				"h": 63
+			}
+		},
+		"PowerUpBlue.png": {
+			"frame": {
+				"x": 241,
+				"y": 115,
+				"w": 71,
+				"h": 63
+			}
+		},
+		"SmallTurrets.png": {
+			"frame": {
+				"x": 27,
+				"y": 277,
+				"w": 89,
+				"h": 14
+			}
+		},
+		"MediumTurrets.png": {
+			"frame": {
+				"x": 27,
+				"y": 306,
+				"w": 157,
+				"h": 14
+			}
+		},
+		"LargeTurrets.png": {
+			"frame": {
+				"x": 27,
+				"y": 334,
+				"w": 222,
+				"h": 14
+			}
 		}
 	},
 	"meta": {

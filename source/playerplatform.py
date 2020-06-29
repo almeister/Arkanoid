@@ -4,6 +4,7 @@ from pygame.sprite import Sprite
 from projectile import Projectile
 from playercontroller import Movement
 from spritegroup import SpriteGroup, SpriteGroupType
+from turrets import Turrets
 
 
 class PlayerPlatform(Sprite):
@@ -22,6 +23,7 @@ class PlayerPlatform(Sprite):
                             self.BOTTOM_SPACING)
         self.sprite_group.add(self)
         self.projectile = Projectile(self.screen, self.sprite_sheet, Projectile.types["small"], collision_detector)
+        self.turrets = None
 
     def move(self, movement, delta_t):
         distance = self.MOVEMENT_SPEED * delta_t / 1000
@@ -39,9 +41,17 @@ class PlayerPlatform(Sprite):
             self.projectile.update_launch_angle(movement)
             self.projectile.set_position(projectile_position)
 
-    def fire(self):
+        if self.turrets:
+            self.turrets.set_position((self.rect.centerx, self.rect.top + self.turrets.y_offset))
+
+    def launch(self):
         self.projectile.fire()
+
+    def show_turret(self):
+        self.turrets = Turrets(self.screen, self.sprite_sheet, "SmallTurrets.png")
 
     def update(self, delta_t, blocks_group):
         self.screen.blit(self.image, self.rect)
         self.projectile.update(delta_t, blocks_group)
+        if self.turrets:
+            self.turrets.update()

@@ -20,7 +20,7 @@ class Arkanoid:
         self.sprite_sheet = SpriteSheet(self.settings.sprites_path, "sh_2.json")
         self.collision_detector = CollisionDetector()
         self.blocks = Blocks(self.screen, self.sprite_sheet)
-        self.player_controller = PlayerController(lambda: self.platform.fire())
+        self.player_controller = PlayerController(lambda: self.platform.launch())
         self.platform = PlayerPlatform(self.screen, self.sprite_sheet, self.collision_detector)
         self.setup_player_platform()
         self.boundaries = Boundaries(self.screen.get_rect())
