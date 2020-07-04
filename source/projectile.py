@@ -3,6 +3,7 @@ from pygame.math import Vector2
 
 from typing import Tuple
 from collisiondetector import CollisionDetector
+from gameevent import BlockHitEvent
 from observer import Observer
 from playercontroller import Movement
 from spritegroup import SpriteGroupType
@@ -14,7 +15,7 @@ class Projectile(Sprite, Observer):
     LAUNCH_ANGLE_INCREMENT = 3
     REST_LAUNCH_ANGLE = 90
 
-    def __init__(self, screen, sprite_sheet, sprite_name, collision_detector):
+    def __init__(self, screen, sprite_sheet, sprite_name, collision_detector, event_bus):
         Sprite.__init__(self)
         self.screen = screen
         self.image = sprite_sheet.image_by_name(sprite_name)
@@ -27,12 +28,13 @@ class Projectile(Sprite, Observer):
         self.velocity = Vector2(0, 0)
         collision_detector.add_listener(self)
         collision_detector.add_sprite(self)
+        self.event_bus = event_bus
 
     def on_observed(self, collision_detector: CollisionDetector) -> None:
-        sprite_group = collision_detector.collided_sprite_group_type
-        if (sprite_group == SpriteGroupType.BLOCKS or
-                sprite_group == SpriteGroupType.BOUNDARIES or
-                sprite_group == SpriteGroupType.PLATFORM):
+        sprite_group = collision_detector.collided_sprite_group
+        if (sprite_group.group_type == SpriteGroupType.BLOCKS or
+                sprite_group.group_type == SpriteGroupType.BOUNDARIES or
+                sprite_group.group_type == SpriteGroupType.PLATFORM):
             for collided_sprite in collision_detector.collided_sprites:
                 test_surfaces = [
                     TestSurface("top", (0, -1), collided_sprite.rect.midtop),
@@ -44,6 +46,10 @@ class Projectile(Sprite, Observer):
                 for test_surface in test_surfaces:
                     if self.projectile_intersects(test_surface.surface_test_point, test_surface.surface_normal):
                         self.reflect(test_surface.surface_normal)
+                        if sprite_group.group_type == SpriteGroupType.BLOCKS:
+                            event = BlockHitEvent(collided_sprite.block_type, collided_sprite.rect.midbottom)
+                            self.event_bus.publish(event)
+                            sprite_group.remove(collided_sprite)
                         return
 
     def projectile_intersects(self, surface_test_point, surface_normal):
@@ -93,7 +99,7 @@ class Projectile(Sprite, Observer):
         self.launch_angle = self.REST_LAUNCH_ANGLE
         self.velocity = Vector2(0, 0)
 
-    def update(self, delta_t, group):
+    def update(self, delta_t):
         self.previous_rect = self.rect.copy()
         if not self.screen.get_rect().contains(self.rect):
             self.reset_flight()

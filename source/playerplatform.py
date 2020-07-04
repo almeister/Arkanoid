@@ -12,7 +12,7 @@ class PlayerPlatform(Sprite):
     BOTTOM_SPACING = 80
     MOVEMENT_SPEED = 900
 
-    def __init__(self, screen, sprite_sheet, collision_detector):
+    def __init__(self, screen, sprite_sheet, collision_detector, event_bus):
         Sprite.__init__(self)
         self.sprite_group = SpriteGroup(SpriteGroupType.PLATFORM)
         self.screen = screen
@@ -22,7 +22,8 @@ class PlayerPlatform(Sprite):
         self.rect.center = (screen.get_rect().midbottom[0], screen.get_rect().midbottom[1] -
                             self.BOTTOM_SPACING)
         self.sprite_group.add(self)
-        self.projectile = Projectile(self.screen, self.sprite_sheet, Projectile.types["small"], collision_detector)
+        self.projectile = Projectile(self.screen, self.sprite_sheet, Projectile.types["small"], collision_detector,
+                                     event_bus)
         self.turrets = None
 
     def move(self, movement, delta_t):
@@ -50,8 +51,8 @@ class PlayerPlatform(Sprite):
     def show_turret(self):
         self.turrets = Turrets(self.screen, self.sprite_sheet, "SmallTurrets.png")
 
-    def update(self, delta_t, blocks_group):
+    def update(self, delta_t):
         self.screen.blit(self.image, self.rect)
-        self.projectile.update(delta_t, blocks_group)
+        self.projectile.update(delta_t)
         if self.turrets:
             self.turrets.update()

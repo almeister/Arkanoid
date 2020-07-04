@@ -10,7 +10,7 @@ class CollisionDetector(Observable):
         self.listeners = []
         self.sprites = []
         self.sprite_groups = []
-        self.collided_sprite_group_type = None
+        self.collided_sprite_group = None
         self.collided_sprites = []
 
     def add_listener(self, observer: Observer) -> None:
@@ -43,11 +43,11 @@ class CollisionDetector(Observable):
         return circle_centre_to_block.magnitude() < sprite_circle.radius
 
     def update(self):
-        self.collided_sprite_group_type = None
+        self.collided_sprite_group = None
         self.collided_sprites = []
         for sprite in self.sprites:
             for sprite_group in self.sprite_groups:
-                self.collided_sprite_group_type = sprite_group.group_type
+                self.collided_sprite_group = sprite_group  # TODO: send sprite_group and collided_sprite in event
                 self.collided_sprites = pygame.sprite.spritecollide(sprite, sprite_group, False,
                                                                     self.collided_with_circle)
                 if self.collided_sprites:

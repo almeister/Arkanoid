@@ -3,10 +3,15 @@ import pygame
 from blocks import Blocks
 from boundaries import Boundaries
 from collisiondetector import CollisionDetector
+from eventbus import EventBus
+from gameevent import BlockHitEvent, GameEvent
+from level import Level
 from levelloader import LevelLoader
 from playercontroller import PlayerController
 from playerplatform import PlayerPlatform
+from powerup import PowerUp
 from settings import Settings
+from spritegroup import SpriteGroup, SpriteGroupType
 from spritesheet import SpriteSheet
 
 
@@ -20,12 +25,25 @@ class Arkanoid:
         self.sprite_sheet = SpriteSheet(self.settings.sprites_path, "sh_2.json")
         self.collision_detector = CollisionDetector()
         self.blocks = Blocks(self.screen, self.sprite_sheet)
+        self.event_bus = EventBus()
+        self.event_bus.subscribe(BlockHitEvent.TYPE, self, lambda event: self.on_block_hit(event))
         self.player_controller = PlayerController(lambda: self.platform.launch())
-        self.platform = PlayerPlatform(self.screen, self.sprite_sheet, self.collision_detector)
+        self.platform = PlayerPlatform(self.screen, self.sprite_sheet, self.collision_detector, self.event_bus)
         self.setup_player_platform()
         self.boundaries = Boundaries(self.screen.get_rect())
         self.setup_boundaries()
+        self.power_up_group = SpriteGroup(SpriteGroupType.POWER_UP)
+        self.level = Level(self.screen, self.sprite_sheet)
         self.load_level()
+
+    def on_block_hit(self, event: GameEvent):
+        if event.TYPE == BlockHitEvent.TYPE:
+            sprite_name = "PowerUpRed.png"
+            self.drop_power_up(sprite_name, event.position)
+
+    def drop_power_up(self, name, position):
+        power_up = PowerUp(self.screen, self.sprite_sheet, name, position)
+        self.power_up_group.add(power_up)
 
     def setup_pygame(self):
         pygame.init()
@@ -50,15 +68,19 @@ class Arkanoid:
             delta_t = self.clock.tick(60)
 
     def update(self, delta_t):
+        self.event_bus.update()
+
+        # self.level.update(delta_t)
         self.screen.fill(self.settings.bg_color)
 
         self.player_controller.update()
 
         self.platform.move(self.player_controller.movement, delta_t)
 
-        self.platform.update(delta_t, self.blocks.sprite_group)
+        self.platform.update(delta_t)
         self.collision_detector.update()
         self.blocks.update()
+        self.power_up_group.update(delta_t)
 
         pygame.display.flip()
 

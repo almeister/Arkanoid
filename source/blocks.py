@@ -11,7 +11,6 @@ class Blocks:
     def __init__(self, screen, sprite_sheet):
         self.screen = screen
         self.sprite_sheet = sprite_sheet
-        self.blocks = []
         self.sprite_group = SpriteGroup(SpriteGroupType.BLOCKS)
 
     def place_blocks(self, origin, block_size, blocks):
@@ -22,9 +21,7 @@ class Blocks:
 
     def place_block(self, block_type, position):
         block = Block(self.screen, self.sprite_sheet, self.block_sprites[block_type], position)
-        self.blocks.append(block)
         self.sprite_group.add(block)
 
     def update(self):
-        for block in self.blocks:
-            block.update()
+        self.sprite_group.update()
