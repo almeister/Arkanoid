@@ -12,9 +12,9 @@ class Movement(Enum):
 
 class PlayerController:
 
-    def __init__(self, on_fire):
+    def __init__(self, on_space_key):
         self.movement = Movement.IDLE
-        self.on_fire = on_fire
+        self.on_space_key = on_space_key
         self.movement_keys_down = []
 
     def poll_events(self):
@@ -32,7 +32,7 @@ class PlayerController:
                     self.movement_keys_down.append(event.key)
 
                 if event.key == pygame.K_SPACE:
-                    self.on_fire()
+                    self.on_space_key()
             elif event.type == pygame.KEYUP:
                 if (event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT) and len(self.movement_keys_down) == 1:
                     self.movement = Movement.IDLE

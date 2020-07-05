@@ -10,8 +10,8 @@ class EventBus:
 
     def __init__(self):
         self.event_queue: SimpleQueue[GameEvent] = SimpleQueue()
-        # event_subscriptions a Dict of {event_type : (EventSubscriber, callback)}
-        self.event_subscriptions: Dict[List[Tuple[EventSubscriber, LambdaType]]] = {}
+        # event_subscriptions a Dict of {event_type : (EventSubscriber, callback(GameEvent)[])}
+        self.event_subscriptions: Dict[List[Tuple[EventSubscriber, LambdaType[GameEvent]]]] = {}
 
     def subscribe(self, event_type, subscriber: EventSubscriber, callback):
         if event_type not in self.event_subscriptions:

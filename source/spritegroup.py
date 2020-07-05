@@ -7,8 +7,9 @@ class SpriteGroupType(Enum):
     SPACE_BALL = 0,
     BLOCKS = 1,
     BOUNDARIES = 2,
-    PLATFORM = 3,
-    POWER_UP = 4
+    OUT_OF_BOUNDS = 3,
+    PLATFORM = 4,
+    POWER_UP = 5
 
 
 class SpriteGroup(pygame.sprite.Group):

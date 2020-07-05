@@ -23,5 +23,8 @@ class Blocks:
         block = Block(self.screen, self.sprite_sheet, self.block_sprites[block_type], position)
         self.sprite_group.add(block)
 
+    def remove_block(self, block_sprite):
+        self.sprite_group.remove(block_sprite)
+
     def update(self):
         self.sprite_group.update()

@@ -2,14 +2,15 @@ import pygame
 from pygame.math import Vector2
 
 from observer import Observer, Observable
+from spritegroup import SpriteGroupType
 
 
 class CollisionDetector(Observable):
 
     def __init__(self):
         self.listeners = []
-        self.sprites = []
         self.sprite_groups = []
+        self.colliding_sprite = None
         self.collided_sprite_group = None
         self.collided_sprites = []
 
@@ -21,9 +22,6 @@ class CollisionDetector(Observable):
 
     def notify(self) -> None:
         [listener.on_observed(self) for listener in self.listeners]
-
-    def add_sprite(self, sprite):
-        self.sprites.append(sprite)
 
     def add_sprite_group(self, sprite_group):
         self.sprite_groups.append(sprite_group)
@@ -42,13 +40,26 @@ class CollisionDetector(Observable):
 
         return circle_centre_to_block.magnitude() < sprite_circle.radius
 
+    def find_space_ball_group(self):
+        for sprite_group in self.sprite_groups:
+            if sprite_group.group_type == SpriteGroupType.SPACE_BALL:
+                return sprite_group
+
+        return None
+
     def update(self):
+        self.colliding_sprite = None
         self.collided_sprite_group = None
         self.collided_sprites = []
-        for sprite in self.sprites:
-            for sprite_group in self.sprite_groups:
-                self.collided_sprite_group = sprite_group  # TODO: send sprite_group and collided_sprite in event
-                self.collided_sprites = pygame.sprite.spritecollide(sprite, sprite_group, False,
-                                                                    self.collided_with_circle)
-                if self.collided_sprites:
-                    self.notify()
+        space_balls_group = self.find_space_ball_group()
+
+        if space_balls_group:
+            for sprite in space_balls_group.sprites():
+                for sprite_group in self.sprite_groups:
+                    if sprite_group.group_type != SpriteGroupType.SPACE_BALL:
+                        self.collided_sprites = pygame.sprite.spritecollide(sprite, sprite_group, False,
+                                                                            self.collided_with_circle)
+                        if self.collided_sprites:
+                            self.colliding_sprite = sprite
+                            self.collided_sprite_group = sprite_group
+                            self.notify()

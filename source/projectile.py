@@ -1,19 +1,17 @@
-from pygame.sprite import Sprite
-from pygame.math import Vector2
-
 from typing import Tuple
+
+from pygame.math import Vector2
+from pygame.sprite import Sprite
+
 from collisiondetector import CollisionDetector
 from gameevent import BlockHitEvent
 from observer import Observer
-from playercontroller import Movement
 from spritegroup import SpriteGroupType
 
 
 class Projectile(Sprite, Observer):
     types = {'small': 'SmallBall.png'}
     FLIGHT_SPEED = 500
-    LAUNCH_ANGLE_INCREMENT = 3
-    REST_LAUNCH_ANGLE = 90
 
     def __init__(self, screen, sprite_sheet, sprite_name, collision_detector, event_bus):
         Sprite.__init__(self)
@@ -21,13 +19,11 @@ class Projectile(Sprite, Observer):
         self.image = sprite_sheet.image_by_name(sprite_name)
         self.rect = self.image.get_rect()
         self.radius = self.rect.h / 2
+        self.hidden = False
         self.previous_rect = self.image.get_rect()
         self.flight_speed = 0
-        self.launch_angle = self.REST_LAUNCH_ANGLE
-        self.movement = Movement.IDLE
         self.velocity = Vector2(0, 0)
         collision_detector.add_listener(self)
-        collision_detector.add_sprite(self)
         self.event_bus = event_bus
 
     def on_observed(self, collision_detector: CollisionDetector) -> None:
@@ -47,13 +43,13 @@ class Projectile(Sprite, Observer):
                     if self.projectile_intersects(test_surface.surface_test_point, test_surface.surface_normal):
                         self.reflect(test_surface.surface_normal)
                         if sprite_group.group_type == SpriteGroupType.BLOCKS:
-                            event = BlockHitEvent(collided_sprite.block_type, collided_sprite.rect.midbottom)
+                            event = BlockHitEvent(collided_sprite, collided_sprite.rect.midbottom)
                             self.event_bus.publish(event)
-                            sprite_group.remove(collided_sprite)
                         return
 
     def projectile_intersects(self, surface_test_point, surface_normal):
         # Line-plane intersection algorithm based on dot-product comparison.
+        # https://pygamerist.blogspot.com/2020/06/arkanoid-and-collision-detection.html
         projectile_edge_point = Vector2(self.rect.center) - self.radius * surface_normal
         previous_projectile_edge_point = Vector2(self.previous_rect.center) - self.radius * surface_normal
         projectile_collision_path = projectile_edge_point - previous_projectile_edge_point
@@ -72,42 +68,32 @@ class Projectile(Sprite, Observer):
     def set_position(self, position):
         self.rect.center = position
 
-    def fire(self):
-        if not self.is_in_flight():
-            self.velocity = Vector2(1, 0).rotate(self.launch_angle - 180)
+    def launch(self, launch_angle):
+        if not self.in_flight():
+            self.velocity = Vector2(1, 0).rotate(launch_angle - 180)
             self.flight_speed = self.FLIGHT_SPEED
 
-    def is_in_flight(self):
+    def in_flight(self):
         return self.flight_speed > 0
 
-    def update_launch_angle(self, movement):
-        if self.movement == movement:
-            if movement == Movement.LEFT:
-                self.launch_angle = max(30, self.launch_angle - self.LAUNCH_ANGLE_INCREMENT)
-            elif movement == Movement.RIGHT:
-                self.launch_angle = min(150, self.launch_angle + self.LAUNCH_ANGLE_INCREMENT)
-            else:
-                self.reset_flight()
-        else:
-            self.reset_flight()
-
-        self.movement = movement
-
     def reset_flight(self):
-        self.movement = Movement.IDLE
         self.flight_speed = 0
-        self.launch_angle = self.REST_LAUNCH_ANGLE
         self.velocity = Vector2(0, 0)
 
-    def update(self, delta_t):
-        self.previous_rect = self.rect.copy()
-        if not self.screen.get_rect().contains(self.rect):
-            self.reset_flight()
-        elif self.is_in_flight():
-            distance = self.flight_speed * delta_t / 1000
-            self.rect.center = self.rect.center + distance * self.velocity.normalize()
+    def hide(self):
+        self.hidden = True
 
-        self.screen.blit(self.image, self.rect)
+    def show(self):
+        self.hidden = False
+
+    def update(self, delta_t):
+        if not self.hidden:
+            self.previous_rect = self.rect.copy()
+            if self.in_flight():
+                distance = self.flight_speed * delta_t / 1000
+                self.rect.center = self.rect.center + distance * self.velocity.normalize()
+
+            self.screen.blit(self.image, self.rect)
 
 
 class TestSurface:
