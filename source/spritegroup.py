@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class SpriteGroupType(Enum):
-    SPACE_BALL = 0,
+    SPACE_BALLS = 0,
     BLOCKS = 1,
     BOUNDARIES = 2,
     OUT_OF_BOUNDS = 3,

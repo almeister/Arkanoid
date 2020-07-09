@@ -42,7 +42,7 @@ class CollisionDetector(Observable):
 
     def find_space_ball_group(self):
         for sprite_group in self.sprite_groups:
-            if sprite_group.group_type == SpriteGroupType.SPACE_BALL:
+            if sprite_group.group_type == SpriteGroupType.SPACE_BALLS:
                 return sprite_group
 
         return None
@@ -56,7 +56,7 @@ class CollisionDetector(Observable):
         if space_balls_group:
             for sprite in space_balls_group.sprites():
                 for sprite_group in self.sprite_groups:
-                    if sprite_group.group_type != SpriteGroupType.SPACE_BALL:
+                    if sprite_group.group_type != SpriteGroupType.SPACE_BALLS:
                         self.collided_sprites = pygame.sprite.spritecollide(sprite, sprite_group, False,
                                                                             self.collided_with_circle)
                         if self.collided_sprites:
