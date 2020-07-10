@@ -1,11 +1,11 @@
 import pygame
 from pygame.math import Vector2
 
-from observer import Observer, Observable
+from icollisiondetector import ICollisionDetectorListener, ICollisionDetector
 from spritegroup import SpriteGroupType
 
 
-class CollisionDetector(Observable):
+class CollisionDetector(ICollisionDetector):
 
     def __init__(self):
         self.listeners = []
@@ -14,14 +14,14 @@ class CollisionDetector(Observable):
         self.collided_sprite_group = None
         self.collided_sprites = []
 
-    def add_listener(self, observer: Observer) -> None:
+    def add_listener(self, observer: ICollisionDetectorListener) -> None:
         self.listeners.append(observer)
 
-    def remove_listener(self, observer: Observer) -> None:
+    def remove_listener(self, observer: ICollisionDetectorListener) -> None:
         self.listeners.remove(observer)
 
     def notify(self) -> None:
-        [listener.on_observed(self) for listener in self.listeners]
+        [listener.on_collision(self) for listener in self.listeners]
 
     def add_sprite_group(self, sprite_group):
         self.sprite_groups.append(sprite_group)

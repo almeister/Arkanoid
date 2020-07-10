@@ -5,11 +5,11 @@ from pygame.sprite import Sprite
 
 from collisiondetector import CollisionDetector
 from gameevent import BlockHitEvent
-from observer import Observer
+from icollisiondetector import ICollisionDetectorListener
 from spritegroup import SpriteGroupType
 
 
-class Projectile(Sprite, Observer):
+class Projectile(Sprite, ICollisionDetectorListener):
     types = {'small': 'SmallBall.png'}
     FLIGHT_SPEED = 500
 
@@ -26,7 +26,7 @@ class Projectile(Sprite, Observer):
         collision_detector.add_listener(self)
         self.event_bus = event_bus
 
-    def on_observed(self, collision_detector: CollisionDetector) -> None:
+    def on_collision(self, collision_detector: CollisionDetector) -> None:
         sprite_group = collision_detector.collided_sprite_group
         if (sprite_group.group_type == SpriteGroupType.BLOCKS or
                 sprite_group.group_type == SpriteGroupType.BOUNDARIES or

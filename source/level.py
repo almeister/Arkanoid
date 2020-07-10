@@ -5,14 +5,14 @@ from collisiondetector import CollisionDetector
 from eventsubscriber import EventSubscriber
 from gameevent import LaunchProjectileEvent, BlockHitEvent, GameEvent
 from levelloader import LevelLoader
-from observer import Observer
+from icollisiondetector import ICollisionDetectorListener
 from playerplatform import PlayerPlatform
 from powerup import PowerUp
 from projectile import Projectile
 from spritegroup import SpriteGroup, SpriteGroupType
 
 
-class Level(EventSubscriber, Observer):
+class Level(EventSubscriber, ICollisionDetectorListener):
 
     def __init__(self, screen, sprite_sheet, event_bus, player_controller):
         EventSubscriber.__init__(self, event_bus)
@@ -56,7 +56,7 @@ class Level(EventSubscriber, Observer):
     def setup_player_platform(self):
         self.collision_detector.add_sprite_group(self.platform.sprite_group)
 
-    def on_observed(self, collision_detector) -> None:
+    def on_collision(self, collision_detector) -> None:
         sprite_group = collision_detector.collided_sprite_group
         if sprite_group.group_type == SpriteGroupType.OUT_OF_BOUNDS:
             self.platform.reset_projectile()
