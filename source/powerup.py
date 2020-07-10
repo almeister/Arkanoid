@@ -9,6 +9,7 @@ class PowerUp(Sprite):
         self.screen = screen
         self.image = sprite_sheet.image_by_name(name)
         self.rect = self.image.get_rect()
+        self.radius = self.rect.w / 2
         self.rect.center = position
 
     def update(self, delta_t):

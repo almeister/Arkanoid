@@ -11,7 +11,7 @@ from turrets import Turrets
 class PlayerPlatform(Sprite):
     platform_sprites = {'small': 'SmallPlatform.png', 'medium': 'MediumPlatform.png', 'large': 'LargePlatform.png'}
     BOTTOM_SPACING = 80
-    MOVEMENT_SPEED = 900
+    MOVEMENT_SPEED = 700
     LAUNCH_ANGLE_INCREMENT = 3
     REST_LAUNCH_ANGLE = 90
 
@@ -78,6 +78,9 @@ class PlayerPlatform(Sprite):
 
     def arm_turrets(self):
         self.turrets = Turrets(self.screen, self.sprite_sheet, "SmallTurrets.png")
+
+    def disarm_turrets(self):
+        self.turrets = None
 
     def update(self, delta_t):
         self.screen.blit(self.image, self.rect)

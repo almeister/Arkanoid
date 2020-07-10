@@ -24,16 +24,12 @@ class Level(EventSubscriber, ICollisionDetectorListener):
         self.blocks = Blocks(self.screen, self.sprite_sheet)
         self.platform = PlayerPlatform(self.screen, self.sprite_sheet, self.collision_detector, self.event_bus)
         self.projectile_group = SpriteGroup(SpriteGroupType.SPACE_BALLS)
-        self.power_up_group = SpriteGroup(SpriteGroupType.POWER_UP)
+        self.power_up_group = SpriteGroup(SpriteGroupType.POWER_UPS)
 
         self.init()
 
     def init(self):
-        self.collision_detector.add_listener(self)
-        self.collision_detector.add_sprite_group(self.projectile_group)
-        self.collision_detector.add_sprite_group(self.power_up_group)
-
-        self.setup_boundaries()
+        self.setup_collision_detection()
         self.setup_player_platform()
 
         self.subscribe_to_events()
@@ -49,7 +45,10 @@ class Level(EventSubscriber, ICollisionDetectorListener):
         self.subscribe(LaunchProjectileEvent.TYPE, lambda event: self.on_launch_projectile(event))
         self.subscribe(BlockHitEvent.TYPE, lambda event: self.on_block_hit(event))
 
-    def setup_boundaries(self):
+    def setup_collision_detection(self):
+        self.collision_detector.add_listener(self)
+        self.collision_detector.add_sprite_group(self.projectile_group)
+        self.collision_detector.add_sprite_group(self.power_up_group)
         self.collision_detector.add_sprite_group(self.boundaries.boundary_sprite_group)
         self.collision_detector.add_sprite_group(self.boundaries.out_of_bounds_sprite_group)
 
@@ -57,10 +56,15 @@ class Level(EventSubscriber, ICollisionDetectorListener):
         self.collision_detector.add_sprite_group(self.platform.sprite_group)
 
     def on_collision(self, collision_detector) -> None:
-        sprite_group = collision_detector.collided_sprite_group
-        if sprite_group.group_type == SpriteGroupType.OUT_OF_BOUNDS:
+        collided_sprite_group = collision_detector.collided_sprite_group
+        colliding_sprite_group = collision_detector.colliding_sprite_group
+        if colliding_sprite_group.group_type == SpriteGroupType.SPACE_BALLS and collided_sprite_group.group_type == SpriteGroupType.OUT_OF_BOUNDS:
             self.platform.reset_projectile()
+            self.platform.disarm_turrets()
             self.projectile_group.remove(collision_detector.colliding_sprite)
+        elif colliding_sprite_group.group_type == SpriteGroupType.POWER_UPS and collided_sprite_group.group_type == SpriteGroupType.PLATFORM:
+            self.platform.arm_turrets()
+            self.power_up_group.remove(collision_detector.colliding_sprite)
 
     def on_block_hit(self, event: GameEvent):
         if event.TYPE == BlockHitEvent.TYPE:

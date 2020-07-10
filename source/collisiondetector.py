@@ -11,6 +11,7 @@ class CollisionDetector(ICollisionDetector):
         self.listeners = []
         self.sprite_groups = []
         self.colliding_sprite = None
+        self.colliding_sprite_group = None
         self.collided_sprite_group = None
         self.collided_sprites = []
 
@@ -40,26 +41,32 @@ class CollisionDetector(ICollisionDetector):
 
         return circle_centre_to_block.magnitude() < sprite_circle.radius
 
-    def find_space_ball_group(self):
+    def find_group(self, group_type):
         for sprite_group in self.sprite_groups:
-            if sprite_group.group_type == SpriteGroupType.SPACE_BALLS:
+            if sprite_group.group_type == group_type:
                 return sprite_group
 
         return None
 
-    def update(self):
+    def notify_collisions_for_group(self, group_type):
         self.colliding_sprite = None
+        self.colliding_sprite_group = None
         self.collided_sprite_group = None
         self.collided_sprites = []
-        space_balls_group = self.find_space_ball_group()
+        group = self.find_group(group_type)
 
-        if space_balls_group:
-            for sprite in space_balls_group.sprites():
+        if group:
+            for sprite in group.sprites():
                 for sprite_group in self.sprite_groups:
-                    if sprite_group.group_type != SpriteGroupType.SPACE_BALLS:
+                    if sprite_group.group_type != group_type:
                         self.collided_sprites = pygame.sprite.spritecollide(sprite, sprite_group, False,
                                                                             self.collided_with_circle)
                         if self.collided_sprites:
                             self.colliding_sprite = sprite
+                            self.colliding_sprite_group = group
                             self.collided_sprite_group = sprite_group
                             self.notify()
+
+    def update(self):
+        self.notify_collisions_for_group(SpriteGroupType.SPACE_BALLS)
+        self.notify_collisions_for_group(SpriteGroupType.POWER_UPS)

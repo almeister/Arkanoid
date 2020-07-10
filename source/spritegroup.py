@@ -9,7 +9,7 @@ class SpriteGroupType(Enum):
     BOUNDARIES = 2,
     OUT_OF_BOUNDS = 3,
     PLATFORM = 4,
-    POWER_UP = 5
+    POWER_UPS = 5
 
 
 class SpriteGroup(pygame.sprite.Group):
