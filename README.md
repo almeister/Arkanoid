@@ -8,3 +8,4 @@ https://www.python.org/downloads/
 https://www.pygame.org/wiki/GettingStarted
 3. Run Arkanoid from terminal or command prompt or in your favourite IDE, eg: PyCharm or VSCode.
 > python arkanoid.py
+
